@@ -1,12 +1,30 @@
-#include <Windows.h>
+/*
+For now I'm just gonna call this Nogad Engine since it's my name backwards
+*/
+
+#include "NogadWin.h"
+#include <string>
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-		// Exit application if window is closed
-	case WM_CLOSE:
+	case WM_CLOSE: // Exit application if window is closed
 		PostQuitMessage(0);
+		break;
+
+	case WM_KEYDOWN:
+		SetWindowTextW(hWnd, (
+			std::wstring(L"KeyDown: ") +
+			static_cast<wchar_t>(wParam)).c_str());
+		break;
+
+	case WM_KEYUP:
+		SetWindowTextW(hWnd, (
+			std::wstring(L"KeyUp: ") +
+			static_cast<wchar_t>(wParam)).c_str());
+		break;
+	case WM_CHAR: // Use this for taking in text input
 		break;
 	}
 
@@ -39,7 +57,7 @@ int CALLBACK WinMain(
 	// Create window instance
 	HWND hWnd = CreateWindowEx(
 		0, pClassName,
-		L"Hello, World!",
+		L"Hello, World! Window",
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 		200, 200, 640, 480,
 		nullptr, nullptr, hInstance, nullptr

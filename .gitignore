@@ -1,1 +1,7 @@
 .vs/
+x64/Debug/
+x64/Release/GraphicsEngine.pdb
+GraphicsEngine/
+GraphicsEngine.vcxproj
+GraphicsEngine.vcxproj.filters
+GraphicsEngine.vcxproj.user
