@@ -1,19 +1,30 @@
 #pragma once
 #include "NogadWin.h"
+#include "EngineException.h"
 #include <string>
 
 class Window {
+public:
+	class Exception : public EngineException
+	{
+	public:
+		Exception(int line, const char* file, HRESULT hr) noexcept;
+		const char* what() const noexcept override;
+		virtual const char* GetType() const noexcept;
+		static std::string TranslateErrorCode(HRESULT hr) noexcept;
+		HRESULT GetErrorCode() const noexcept;
+		std::string GetErrorString() const noexcept;
+	private:
+		HRESULT hr;
+	};
+
 private:
 	static constexpr const wchar_t* pClassName = L"NogadEngine";
-	static constexpr const int width = 640;
-	static constexpr const int height = 480;
-	//// Only want one window
-	//static Window window;
 	HINSTANCE hInst;
 	HWND hWnd;
 
 public:
-	Window() noexcept;
+	Window(int width, int height, std::wstring title);
 	~Window();
 
 private:
@@ -21,3 +32,8 @@ private:
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 };
+
+
+// error exception helper macro
+#define ENGWND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr)
+#define ENGWND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError())

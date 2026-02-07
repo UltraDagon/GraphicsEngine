@@ -11,23 +11,40 @@ int CALLBACK WinMain(
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
-	// Create window
-	Window wnd;
-
-	// Message pump
-	MSG msg;
-	BOOL gResult;
-	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
+	try
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		// Create window
+		Window wnd(800, 300, L"Awesome window");
+
+		// Message pump
+		MSG msg;
+		BOOL gResult;
+		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		// Return -1 if error, otherwise return window exit status
+		if (gResult == -1)
+		{
+			return -1;
+		}
+
+		return msg.wParam;
+	}
+	catch (const EngineException& e)
+	{
+		MessageBoxA(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
+	}
+	catch (const std::exception& e)
+	{
+		MessageBoxA(nullptr, e.what(), "Standard Exception", MB_OK | MB_ICONEXCLAMATION);
+	}
+	catch (...)
+	{
+		MessageBoxA(nullptr, "No details available", "Unknown Exception", MB_OK | MB_ICONEXCLAMATION);
 	}
 
-	// Return -1 if error, otherwise return window exit status
-	if (gResult == -1)
-	{
-		return -1;
-	}
-
-	return msg.wParam;
+	return -1;
 }
