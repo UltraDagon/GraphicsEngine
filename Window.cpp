@@ -86,22 +86,31 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 {
 	switch (msg)
 	{
-	case WM_CLOSE: // Exit application if window is closed
+		// Exit application if window is closed
+	case WM_CLOSE:
 		PostQuitMessage(0);
 		return 0;
 
-	case WM_KEYDOWN:
-		SetWindowTextW(hWnd, (
-			std::wstring(L"KeyDown: ") +
-			static_cast<wchar_t>(wParam)).c_str());
+		// If window loses focus, forget any keys pressed down
+	case WM_KILLFOCUS:
+		keyboard.ClearState();
 		break;
 
-	case WM_KEYUP:
-		SetWindowTextW(hWnd, (
-			std::wstring(L"KeyUp: ") +
-			static_cast<wchar_t>(wParam)).c_str());
+		// Keyboard messages
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+		// Filter out autorepeat messages, unless autorepeat is enabled
+		if (!(lParam & 0x40000000) || keyboard.AutorepeatIsEnabled())
+		{
+			keyboard.OnKeyPressed(static_cast<unsigned char>(wParam));
+		}
 		break;
-	case WM_CHAR: // Use this for taking in text input
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		keyboard.OnKeyReleased(static_cast<unsigned char>(wParam));
+		break;
+	case WM_CHAR:
+		keyboard.OnChar(static_cast<unsigned char>(wParam));
 		break;
 	}
 

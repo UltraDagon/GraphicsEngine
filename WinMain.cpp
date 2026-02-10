@@ -14,15 +14,21 @@ int CALLBACK WinMain(
 	try
 	{
 		// Create window
-		Window wnd(800, 300, L"Awesome window");
+		Window window(800, 300, L"Awesome window");
 
 		// Message pump
 		MSG msg;
 		BOOL gResult;
 		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
 		{
+			// Take in message from Windows
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+
+			if (window.keyboard.KeyIsPressed(VK_SPACE))
+			{
+				MessageBox(nullptr, L"SPACE PRESSED", L"SPACE PRESSED!", MB_OK);
+			}
 		}
 
 		// Return -1 if error, otherwise return window exit status
